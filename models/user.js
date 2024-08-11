@@ -5,14 +5,15 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minLength: 2,
-    maxLength: 30,
+    minlength: 2,
+    maxlength: 30,
   },
   avatar: {
     type: String,
+    required: true,
     validate: {
       validator: (v) => validator.isURL(v),
-      message: "Avatar input is not a valid url",
+      message: "Avatar input is not a valid URL",
     },
   },
 });
