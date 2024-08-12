@@ -1,4 +1,3 @@
-const { default: mongoose } = require("mongoose");
 const User = require("../models/user");
 const { errorMsg400, errorMsg404, errorMsg500 } = require("../utils/errors");
 
@@ -10,9 +9,9 @@ const getUsers = (req, res) => {
     .catch((err) => {
       console.error(`Error: ${err.name}`);
       if (err.name === "ValidationError") {
-        res.status(400).send({ error: err.message });
+        res.status(400).send({ message: err.message });
       } else if (err.name === "UnfoundResourceError") {
-        res.status(404).send({ error: err.message });
+        res.status(404).send({ message: err.message });
       } else {
         res.status(500).send(errorMsg500);
       }
@@ -22,7 +21,7 @@ const getUsers = (req, res) => {
 const getUser = (req, res) => {
   const { userId } = req.params;
   if (!userId) {
-    res.status(400).send({ error: errorMsg400 });
+    res.status(400).send({ message: errorMsg400 });
     return;
   }
 
@@ -38,11 +37,11 @@ const getUser = (req, res) => {
     .catch((err) => {
       console.error(`Error: ${err.name}`);
       if (err.name === "CastError") {
-        res.status(400).send({ error: errorMsg400 });
+        res.status(400).send({ message: errorMsg400 });
       } else if (err.name === "UnfoundResourceError") {
-        res.status(404).send({ error: errorMsg404 });
+        res.status(404).send({ message: errorMsg404 });
       } else {
-        res.status(500).send({ error: errorMsg500 });
+        res.status(500).send({ message: errorMsg500 });
       }
     });
 };
@@ -50,7 +49,7 @@ const getUser = (req, res) => {
 const createUser = (req, res) => {
   const { name, avatar } = req.body;
   if (!name || !avatar) {
-    res.status(400).send({ error: errorMsg400 });
+    res.status(400).send({ message: errorMsg400 });
     return;
   }
 
