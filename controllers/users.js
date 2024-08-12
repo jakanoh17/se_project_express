@@ -13,7 +13,7 @@ const getUsers = (req, res) => {
       } else if (err.name === "UnfoundResourceError") {
         res.status(404).send({ message: err.message });
       } else {
-        res.status(500).send(errorMsg500);
+        res.status(500).send({ message: errorMsg500 });
       }
     });
 };
@@ -60,9 +60,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(`Error: ${err}`);
       if (err.name === "ValidationError") {
-        res.status(400).send({ error400: err.message });
+        res.status(400).send({ message: err.message });
       }
-      res.status(500).send(errorMsg500);
+      res.status(500).send({ message: errorMsg500 });
     });
 };
 

@@ -25,9 +25,6 @@ const getItems = (req, res) => {
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   if (!name || !weather || !imageUrl) {
-    // const invalidInputError = new Error(errorMsg400);
-    // invalidInputError.name = "InvalidInputError";
-    // throw invalidInputError;
     res.status(400).send({ message: errorMsg400 });
     return;
   }
