@@ -38,8 +38,9 @@ const createItem = (req, res) => {
       console.error(`Error: ${err}`);
       if (err.name === "ValidationError") {
         res.status(400).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: errorMsg500 });
       }
-      res.status(500).send({ message: errorMsg500 });
     });
 };
 
@@ -49,29 +50,28 @@ const deleteItem = async (req, res) => {
     return;
   }
 
-  ClothingItem.findByIdAndRemove(req.params.itemId)
-    .orFail(() => {
+  try {
+    await ClothingItem.findByIdAndRemove(req.params.itemId).orFail(() => {
       const unfoundResourceErr = new Error(errorMsg404);
       unfoundResourceErr.name = "UnfoundResourceError";
       throw unfoundResourceErr;
-    })
-    .then(() => {
-      res.status(200).send({ message: "Resource has been deleted" });
-    })
-    .catch((err) => {
-      console.error(`Error: ${err.name}`);
-      if (err.name === "CastError") {
-        res.status(400).send({ message: errorMsg400 });
-      } else if (err.name === "UnfoundResourceError") {
-        res.status(404).send({ message: err.message });
-      } else {
-        res.status(500).send({ message: errorMsg500 });
-      }
     });
+    res.status(200).send({ message: "Resource has been deleted" });
+  } catch (err) {
+    console.error(`Error: ${err}`);
+    if (err.name === "CastError") {
+      res.status(400).send({ message: errorMsg400 });
+    } else if (err.name === "UnfoundResourceError") {
+      res.status(404).send({ message: err.message });
+    } else {
+      res.status(500).send({ message: errorMsg500 });
+    }
+  }
 };
 
 const likeItem = (req, res) => {
-  if (!req.user._id || !mongoose.Types.ObjectId.isValid(req.user._id)) {
+  console.log(req.params.itemId);
+  if (!req.user._id) {
     res.status(400).send({ message: errorMsg400 });
     return;
   }
@@ -81,7 +81,7 @@ const likeItem = (req, res) => {
     {
       $addToSet: { likes: req.user._id },
     },
-    { new: true }
+    { new: true, runValidators: true }
   )
     .orFail(() => {
       const unfoundResourceErr = new Error(errorMsg404);
@@ -92,8 +92,9 @@ const likeItem = (req, res) => {
       res.status(200).send(updatedItem);
     })
     .catch((err) => {
-      console.error(`Error: ${err.name}`);
-      if (err.name === "ValidationError") {
+      console.error(`Error: ${err}`);
+      console.error(err);
+      if (err.name === "ValidationError" || err.name === "CastError") {
         res.status(400).send({ message: err.message });
       } else if (err.name === "UnfoundResourceError") {
         res.status(404).send({ message: err.message });
@@ -104,7 +105,7 @@ const likeItem = (req, res) => {
 };
 
 const unlikeItem = (req, res) => {
-  if (!req.user._id || !mongoose.Types.ObjectId.isValid(req.user._id)) {
+  if (!req.user._id) {
     res.status(400).send({ message: errorMsg400 });
     return;
   }
@@ -114,19 +115,19 @@ const unlikeItem = (req, res) => {
     {
       $pull: { likes: req.user._id },
     },
-    { new: true }
+    { new: true, runValidators: true }
   )
     .orFail(() => {
       const unfoundResourceErr = new Error(errorMsg404);
-      unfoundResourceErr.name = "unfoundResourceError";
+      unfoundResourceErr.name = "UnfoundResourceError";
       throw unfoundResourceErr;
     })
     .then((updatedItem) => {
       res.status(200).send(updatedItem);
     })
     .catch((err) => {
-      console.error(`Error: ${err.name}`);
-      if (err.name === "ValidationError") {
+      console.error(`Error: ${err}`);
+      if (err.name === "ValidationError" || err.name === "CastError") {
         res.status(400).send({ message: err.message });
       } else if (err.name === "UnfoundResourceError") {
         res.status(404).send({ message: err.message });

@@ -7,8 +7,8 @@ const getUsers = (req, res) => {
       res.status(200).send(foundUsers);
     })
     .catch((err) => {
-      console.error(`Error: ${err.name}`);
-      if (err.name === "ValidationError") {
+      console.error(`Error: ${err}`);
+      if (err.name === "ValidationError" || err.name === "CastError") {
         res.status(400).send({ message: err.message });
       } else if (err.name === "UnfoundResourceError") {
         res.status(404).send({ message: err.message });
@@ -35,7 +35,7 @@ const getUser = (req, res) => {
       res.status(200).send(foundUser);
     })
     .catch((err) => {
-      console.error(`Error: ${err.name}`);
+      console.error(`Error: ${err}`);
       if (err.name === "CastError") {
         res.status(400).send({ message: errorMsg400 });
       } else if (err.name === "UnfoundResourceError") {
@@ -59,10 +59,11 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       console.error(`Error: ${err}`);
-      if (err.name === "ValidationError") {
+      if (err.name === "ValidationError" || err.name === "CastError") {
         res.status(400).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: errorMsg500 });
       }
-      res.status(500).send({ message: errorMsg500 });
     });
 };
 
