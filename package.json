@@ -4,9 +4,9 @@
   "description": "Adding backend to WTWR app from se_project_react",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon app.js",
+    "dev": "node app.js",
     "lint": "npx eslint .",
-    "start": "pm2 start app.js"
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
