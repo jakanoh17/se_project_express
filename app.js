@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const { errorMsg404 } = require("./utils/errors");
 
 mongoose.set("strictQuery", false);
 
@@ -21,6 +22,9 @@ app.use((req, res, next) => {
 
 app.use("/users", users);
 app.use("/items", clothingItems);
+app.use((req, res) => {
+  res.status(404).send({ message: errorMsg404 });
+});
 
 app.listen(PORT, () => {
   console.log(`App listing on port: ${PORT}`);
