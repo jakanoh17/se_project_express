@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const ClothingItem = require("../models/clothingitem");
 const { errorMsg400, errorMsg404, errorMsg500 } = require("../utils/errors");
 
