@@ -1,5 +1,5 @@
 const User = require("../models/user");
-const { errorMsg400, errorMsg404, errorMsg500 } = require("../utils/errors");
+const { badRequest, notFound, serverError } = require("../utils/errors");
 
 const getUsers = (req, res) => {
   User.find({})
@@ -8,7 +8,7 @@ const getUsers = (req, res) => {
     })
     .catch((err) => {
       console.error(`Error: ${err}`);
-      res.status(500).send({ message: errorMsg500 });
+      res.status(serverError.status).send({ message: serverError.message });
     });
 };
 
@@ -17,7 +17,7 @@ const getUser = (req, res) => {
 
   User.findById(userId)
     .orFail(() => {
-      const unfoundResourceErr = new Error(errorMsg404);
+      const unfoundResourceErr = new Error(notFound.message);
       unfoundResourceErr.name = "UnfoundResourceError";
       throw unfoundResourceErr;
     })
@@ -27,11 +27,11 @@ const getUser = (req, res) => {
     .catch((err) => {
       console.error(`Error: ${err}`);
       if (err.name === "CastError") {
-        res.status(400).send({ message: errorMsg400 });
+        res.status(badRequest.status).send({ message: badRequest.message });
       } else if (err.name === "UnfoundResourceError") {
-        res.status(404).send({ message: errorMsg404 });
+        res.status(notFound.status).send({ message: notFound.message });
       } else {
-        res.status(500).send({ message: errorMsg500 });
+        res.status(serverError.status).send({ message: serverError.message });
       }
     });
 };
@@ -46,9 +46,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(`Error: ${err}`);
       if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(400).send({ message: errorMsg400 });
+        res.status(badRequest.status).send({ message: badRequest.message });
       } else {
-        res.status(500).send({ message: errorMsg500 });
+        res.status(serverError.status).send({ message: serverError.message });
       }
     });
 };

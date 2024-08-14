@@ -1,5 +1,5 @@
 const ClothingItem = require("../models/clothingitem");
-const { errorMsg400, errorMsg404, errorMsg500 } = require("../utils/errors");
+const { badRequest, notFound, serverError } = require("../utils/errors");
 
 const getItems = (req, res) => {
   ClothingItem.find({})
@@ -8,7 +8,7 @@ const getItems = (req, res) => {
     })
     .catch((err) => {
       console.error(`Error: ${err}`);
-      res.status(500).send(errorMsg500);
+      res.status(serverError.status).send(serverError.message);
     });
 };
 
@@ -23,9 +23,9 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(`Error: ${err}`);
       if (err.name === "ValidationError") {
-        res.status(400).send({ message: errorMsg400 });
+        res.status(badRequest.status).send({ message: badRequest.message });
       } else {
-        res.status(500).send({ message: errorMsg500 });
+        res.status(serverError.status).send({ message: serverError.message });
       }
     });
 };
@@ -33,7 +33,7 @@ const createItem = (req, res) => {
 const deleteItem = async (req, res) => {
   try {
     await ClothingItem.findByIdAndRemove(req.params.itemId).orFail(() => {
-      const unfoundResourceErr = new Error(errorMsg404);
+      const unfoundResourceErr = new Error(notFound.message);
       unfoundResourceErr.name = "UnfoundResourceError";
       throw unfoundResourceErr;
     });
@@ -41,11 +41,11 @@ const deleteItem = async (req, res) => {
   } catch (err) {
     console.error(`Error: ${err}`);
     if (err.name === "CastError") {
-      res.status(400).send({ message: errorMsg400 });
+      res.status(badRequest.status).send({ message: badRequest.message });
     } else if (err.name === "UnfoundResourceError") {
-      res.status(404).send({ message: errorMsg404 });
+      res.status(notFound.status).send({ message: notFound.message });
     } else {
-      res.status(500).send({ message: errorMsg500 });
+      res.status(serverError.status).send({ message: serverError.message });
     }
   }
 };
@@ -53,7 +53,7 @@ const deleteItem = async (req, res) => {
 const likeItem = (req, res) => {
   console.log(req.params.itemId);
   if (!req.user._id) {
-    res.status(400).send({ message: errorMsg400 });
+    res.status(badRequest.status).send({ message: badRequest.message });
     return;
   }
 
@@ -65,7 +65,7 @@ const likeItem = (req, res) => {
     { new: true, runValidators: true }
   )
     .orFail(() => {
-      const unfoundResourceErr = new Error(errorMsg404);
+      const unfoundResourceErr = new Error(notFound.message);
       unfoundResourceErr.name = "UnfoundResourceError";
       throw unfoundResourceErr;
     })
@@ -76,18 +76,18 @@ const likeItem = (req, res) => {
       console.error(`Error: ${err}`);
       console.error(err);
       if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(400).send({ message: errorMsg400 });
+        res.status(badRequest.status).send({ message: badRequest.message });
       } else if (err.name === "UnfoundResourceError") {
-        res.status(404).send({ message: errorMsg404 });
+        res.status(notFound.status).send({ message: notFound.message });
       } else {
-        res.status(500).send({ message: errorMsg500 });
+        res.status(serverError.status).send({ message: serverError.message });
       }
     });
 };
 
 const unlikeItem = (req, res) => {
   if (!req.user._id) {
-    res.status(400).send({ message: errorMsg400 });
+    res.status(badRequest.status).send({ message: badRequest.message });
     return;
   }
 
@@ -99,7 +99,7 @@ const unlikeItem = (req, res) => {
     { new: true, runValidators: true }
   )
     .orFail(() => {
-      const unfoundResourceErr = new Error(errorMsg404);
+      const unfoundResourceErr = new Error(notFound.message);
       unfoundResourceErr.name = "UnfoundResourceError";
       throw unfoundResourceErr;
     })
@@ -109,11 +109,11 @@ const unlikeItem = (req, res) => {
     .catch((err) => {
       console.error(`Error: ${err}`);
       if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(400).send({ message: errorMsg400 });
+        res.status(badRequest.status).send({ message: badRequest.message });
       } else if (err.name === "UnfoundResourceError") {
-        res.status(404).send({ message: errorMsg404 });
+        res.status(notFound.status).send({ message: notFound.message });
       } else {
-        res.status(500).send({ message: errorMsg500 });
+        res.status(serverError.status).send({ message: serverError.message });
       }
     });
 };
