@@ -13,7 +13,7 @@ const auth = (req, res, next) => {
     const token = authorization.replace("Bearer ", "");
     const payload = jwt.verify(token, JWT_TOKEN);
     req.user = payload;
-  } catch {
+  } catch (err) {
     mapAndSendErrors(err, res);
   }
   next();

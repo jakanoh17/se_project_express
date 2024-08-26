@@ -1,12 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const {
-  unauthorizedUserError,
-  notFound,
-  mapAndSendErrors,
-  badRequest,
-} = require("../utils/errors");
+const { notFound, mapAndSendErrors } = require("../utils/errors");
 const JWT_TOKEN = require("../utils/config");
 
 const login = async (req, res) => {
