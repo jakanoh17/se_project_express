@@ -1,57 +1,51 @@
 const ClothingItem = require("../models/clothingitem");
-const { badRequest, notFound, serverError } = require("../utils/errors");
+const {
+  badRequest,
+  notFound,
+  forbiddenError,
+  mapAndSendErrors,
+} = require("../utils/errors");
 
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((foundItems) => {
-      res.send(foundItems);
+      res.status(200).send(foundItems);
     })
     .catch((err) => {
-      console.error(`Error: ${err}`);
-      res.status(serverError.status).send(serverError.message);
+      mapAndSendErrors(err, res);
     });
 };
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
 
-  ClothingItem.create({ name, weather, imageUrl })
+  ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
     .then((newItem) => {
-      console.log(req.user._id);
       res.status(201).send({ data: newItem });
     })
     .catch((err) => {
-      console.error(`Error: ${err}`);
-      if (err.name === "ValidationError") {
-        res.status(badRequest.status).send({ message: badRequest.message });
-      } else {
-        res.status(serverError.status).send({ message: serverError.message });
-      }
+      mapAndSendErrors(err, res);
     });
 };
 
 const deleteItem = async (req, res) => {
   try {
-    await ClothingItem.findByIdAndRemove(req.params.itemId).orFail(() => {
-      const unfoundResourceErr = new Error(notFound.message);
-      unfoundResourceErr.name = "UnfoundResourceError";
-      throw unfoundResourceErr;
-    });
-    res.send({ message: "Resource has been deleted" });
-  } catch (err) {
-    console.error(`Error: ${err}`);
-    if (err.name === "CastError") {
-      res.status(badRequest.status).send({ message: badRequest.message });
-    } else if (err.name === "UnfoundResourceError") {
-      res.status(notFound.status).send({ message: notFound.message });
-    } else {
-      res.status(serverError.status).send({ message: serverError.message });
+    const foundItem = await ClothingItem.findById(req.params.itemId).orFail(
+      () => {
+        throw new Error(notFound.message);
+      }
+    );
+    if (req.user._id !== foundItem.owner.id.toString("hex")) {
+      throw new Error(forbiddenError.message);
     }
+    await ClothingItem.findByIdAndRemove(req.params.itemId);
+    res.status(200).send({ message: "Resource has been deleted" });
+  } catch (err) {
+    mapAndSendErrors(err, res);
   }
 };
 
 const likeItem = (req, res) => {
-  console.log(req.params.itemId);
   if (!req.user._id) {
     res.status(badRequest.status).send({ message: badRequest.message });
     return;
@@ -65,23 +59,13 @@ const likeItem = (req, res) => {
     { new: true, runValidators: true }
   )
     .orFail(() => {
-      const unfoundResourceErr = new Error(notFound.message);
-      unfoundResourceErr.name = "UnfoundResourceError";
-      throw unfoundResourceErr;
+      throw new Error(notFound.message);
     })
     .then((updatedItem) => {
       res.send(updatedItem);
     })
     .catch((err) => {
-      console.error(`Error: ${err}`);
-      console.error(err);
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(badRequest.status).send({ message: badRequest.message });
-      } else if (err.name === "UnfoundResourceError") {
-        res.status(notFound.status).send({ message: notFound.message });
-      } else {
-        res.status(serverError.status).send({ message: serverError.message });
-      }
+      mapAndSendErrors(err, res);
     });
 };
 
@@ -99,22 +83,13 @@ const unlikeItem = (req, res) => {
     { new: true, runValidators: true }
   )
     .orFail(() => {
-      const unfoundResourceErr = new Error(notFound.message);
-      unfoundResourceErr.name = "UnfoundResourceError";
-      throw unfoundResourceErr;
+      throw new Error(notFound.message);
     })
     .then((updatedItem) => {
       res.send(updatedItem);
     })
     .catch((err) => {
-      console.error(`Error: ${err}`);
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(badRequest.status).send({ message: badRequest.message });
-      } else if (err.name === "UnfoundResourceError") {
-        res.status(notFound.status).send({ message: notFound.message });
-      } else {
-        res.status(serverError.status).send({ message: serverError.message });
-      }
+      mapAndSendErrors(err, res);
     });
 };
 

@@ -1,56 +1,66 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const { badRequest, notFound, serverError } = require("../utils/errors");
+const {
+  unauthorizedUserError,
+  notFound,
+  mapAndSendErrors,
+  badRequest,
+} = require("../utils/errors");
+const JWT_TOKEN = require("../utils/config");
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((foundUsers) => {
-      res.send(foundUsers);
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findUserByCredentials(email, password);
+    const token = jwt.sign({ _id: user._id }, JWT_TOKEN, { expiresIn: "7d" });
+    res.status(200).send({ token });
+  } catch (err) {
+    mapAndSendErrors(err, res);
+  }
+};
+
+const getCurrentUser = (req, res) => {
+  User.findById(req.user._id)
+    .orFail(new Error(notFound.message))
+    .then((currentUser) => {
+      res.status(200).send(currentUser);
     })
     .catch((err) => {
-      console.error(`Error: ${err}`);
-      res.status(serverError.status).send({ message: serverError.message });
+      mapAndSendErrors(err, res);
     });
 };
 
-const getUser = (req, res) => {
-  const { userId } = req.params;
-
-  User.findById(userId)
-    .orFail(() => {
-      const unfoundResourceErr = new Error(notFound.message);
-      unfoundResourceErr.name = "UnfoundResourceError";
-      throw unfoundResourceErr;
-    })
-    .then((foundUser) => {
-      res.send(foundUser);
-    })
-    .catch((err) => {
-      console.error(`Error: ${err}`);
-      if (err.name === "CastError") {
-        res.status(badRequest.status).send({ message: badRequest.message });
-      } else if (err.name === "UnfoundResourceError") {
-        res.status(notFound.status).send({ message: notFound.message });
-      } else {
-        res.status(serverError.status).send({ message: serverError.message });
-      }
-    });
+const createUser = async (req, res) => {
+  const { name, avatar, email, password } = req.body;
+  try {
+    const hash = await bcrypt.hash(password, 10);
+    const newUser = await User.create({ name, avatar, email, password: hash });
+    const foundUser = await User.findById(newUser._id);
+    res.status(201).send(foundUser);
+  } catch (err) {
+    // Could possibly throw 11000 error from MongoDB for duplicate user
+    mapAndSendErrors(err, res);
+  }
 };
 
-const createUser = (req, res) => {
+const updateCurrentUser = (req, res) => {
   const { name, avatar } = req.body;
-
-  User.create({ name, avatar })
-    .then((newUser) => {
-      res.status(201).send(newUser);
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, avatar },
+    {
+      runValidators: true,
+      new: true,
+    }
+  )
+    .orFail(new Error(notFound.message))
+    .then((updatedUser) => {
+      res.status(200).send(updatedUser);
     })
     .catch((err) => {
-      console.error(`Error: ${err}`);
-      if (err.name === "ValidationError" || err.name === "CastError") {
-        res.status(badRequest.status).send({ message: badRequest.message });
-      } else {
-        res.status(serverError.status).send({ message: serverError.message });
-      }
+      mapAndSendErrors(err, res);
     });
 };
-
-module.exports = { getUsers, getUser, createUser };
+module.exports = { createUser, login, getCurrentUser, updateCurrentUser };
