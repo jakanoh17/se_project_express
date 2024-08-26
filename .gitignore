@@ -13,7 +13,3 @@ node_modules
 .DS_Store
 .idea
 .vscode
-
-# Tokens
-.env
-config.js
