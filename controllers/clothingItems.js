@@ -9,7 +9,7 @@ const {
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((foundItems) => {
-      res.status(200).send(foundItems);
+      res.send(foundItems);
     })
     .catch((err) => {
       mapAndSendErrors(err, res);
@@ -39,7 +39,7 @@ const deleteItem = async (req, res) => {
       throw new Error(forbiddenError.message);
     }
     await ClothingItem.findByIdAndRemove(req.params.itemId);
-    res.status(200).send({ message: "Resource has been deleted" });
+    res.send({ message: "Resource has been deleted" });
   } catch (err) {
     mapAndSendErrors(err, res);
   }

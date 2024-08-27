@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const JWT_TOKEN = require("../utils/config");
 const { unauthorizedUserError, mapAndSendErrors } = require("../utils/errors");
 
-const auth = (req, res, next) => {
+const auth = async (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
@@ -11,8 +11,13 @@ const auth = (req, res, next) => {
   // payload contains user._id
   try {
     const token = authorization.replace("Bearer ", "");
-    const payload = jwt.verify(token, JWT_TOKEN);
-    req.user = payload;
+    await jwt.verify(token, JWT_TOKEN, function (err, decoded) {
+      if (!err) {
+        req.user = decoded;
+        return;
+      }
+      throw new Error(unauthorizedUserError.message);
+    });
   } catch (err) {
     mapAndSendErrors(err, res);
   }

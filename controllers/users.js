@@ -1,16 +1,20 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const { notFound, mapAndSendErrors } = require("../utils/errors");
+const { badRequest, notFound, mapAndSendErrors } = require("../utils/errors");
 const JWT_TOKEN = require("../utils/config");
 
 const login = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
+    if (!email || !password) {
+      throw new Error(badRequest.message);
+    }
 
     const user = await User.findUserByCredentials(email, password);
     const token = jwt.sign({ _id: user._id }, JWT_TOKEN, { expiresIn: "7d" });
-    res.status(200).send({ token });
+    res.send({ token });
   } catch (err) {
     mapAndSendErrors(err, res);
   }
@@ -20,7 +24,7 @@ const getCurrentUser = (req, res) => {
   User.findById(req.user._id)
     .orFail(new Error(notFound.message))
     .then((currentUser) => {
-      res.status(200).send(currentUser);
+      res.send(currentUser);
     })
     .catch((err) => {
       mapAndSendErrors(err, res);
@@ -52,7 +56,7 @@ const updateCurrentUser = (req, res) => {
   )
     .orFail(new Error(notFound.message))
     .then((updatedUser) => {
-      res.status(200).send(updatedUser);
+      res.send(updatedUser);
     })
     .catch((err) => {
       mapAndSendErrors(err, res);
