@@ -11,7 +11,7 @@ const auth = async (req, res, next) => {
   // payload contains user._id
   try {
     const token = authorization.replace("Bearer ", "");
-    await jwt.verify(token, JWT_TOKEN, function (err, decoded) {
+    await jwt.verify(token, JWT_TOKEN, (err, decoded) => {
       if (!err) {
         req.user = decoded;
         return;
