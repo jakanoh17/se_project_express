@@ -16,3 +16,5 @@ The back-end project is focused on creating a server for the WTWR application th
 - Schema design
 - MongoDB, Mongoose
 - Eslint
+
+**Link to frontend:** https://github.com/jakanoh17/se_project_react
