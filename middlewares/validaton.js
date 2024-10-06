@@ -37,13 +37,23 @@ const validateNewUserData = celebrate({
     name: Joi.string().required().min(2).max(30),
     avatar: Joi.string().required().custom(validateURL).messages({
       "string.empty": 'The "avatar" field must be filled in',
-      "string.uri": 'the "avatar" field must be a valid url',
+      "string.uri": 'The "avatar" field must be a valid url',
     }),
     email: Joi.string().required().custom(validateEmail).messages({
-      "string.empty": 'The "email" field must be filled in',
-      "string.email": 'The "email" field must be a valid email',
+      "string.empty": "The 'email' field must be filled in",
+      "string.email": "The 'email' field must be a valid email",
     }),
     password: Joi.string().required(),
+  }),
+});
+
+const validateUpdatedUserData = celebrte({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    avatar: Joi.string().required().custom(validateURL).messages({
+      "string.empty": 'The "avatar" field must be filled in',
+      "string.uri": 'The "avatar" field must be a valid url',
+    }),
   }),
 });
 
@@ -82,4 +92,5 @@ module.exports = {
   validateAuthenticationData,
   validateUserId,
   validateClothingId,
+  validateUpdatedUserData,
 };
