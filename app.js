@@ -14,7 +14,7 @@ const users = require("./routes/users");
 const clothingItems = require("./routes/clothingItems");
 const index = require("./routes/index");
 
-const { PORT = 49152 } = process.env;
+const { PORT = 3001 } = process.env;
 mongoose.connect("mongodb://127.0.0.1:27017/wtwr_db");
 
 app.use(cors());
