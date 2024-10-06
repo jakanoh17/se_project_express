@@ -1,34 +1,25 @@
 const ClothingItem = require("../models/clothingitem");
-const {
-  badRequest,
-  notFound,
-  forbiddenError,
-  mapAndSendErrors,
-} = require("../utils/errors");
+const { badRequest, notFound, forbiddenError } = require("../utils/errors");
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((foundItems) => {
       res.send(foundItems);
     })
-    .catch((err) => {
-      mapAndSendErrors(err, res);
-    });
+    .catch(next);
 };
 
-const createItem = (req, res) => {
+const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
 
   ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
     .then((newItem) => {
       res.status(201).send({ data: newItem });
     })
-    .catch((err) => {
-      mapAndSendErrors(err, res);
-    });
+    .catch(next);
 };
 
-const deleteItem = async (req, res) => {
+const deleteItem = async (req, res, next) => {
   try {
     const foundItem = await ClothingItem.findById(req.params.itemId).orFail(
       () => {
@@ -41,11 +32,11 @@ const deleteItem = async (req, res) => {
     await ClothingItem.findByIdAndRemove(req.params.itemId);
     res.send({ message: "Resource has been deleted" });
   } catch (err) {
-    mapAndSendErrors(err, res);
+    next(err);
   }
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   if (!req.user._id) {
     res.status(badRequest.status).send({ message: badRequest.message });
     return;
@@ -64,12 +55,10 @@ const likeItem = (req, res) => {
     .then((updatedItem) => {
       res.send(updatedItem);
     })
-    .catch((err) => {
-      mapAndSendErrors(err, res);
-    });
+    .catch(next);
 };
 
-const unlikeItem = (req, res) => {
+const unlikeItem = (req, res, next) => {
   if (!req.user._id) {
     res.status(badRequest.status).send({ message: badRequest.message });
     return;
@@ -88,9 +77,7 @@ const unlikeItem = (req, res) => {
     .then((updatedItem) => {
       res.send(updatedItem);
     })
-    .catch((err) => {
-      mapAndSendErrors(err, res);
-    });
+    .catch(next);
 };
 
 module.exports = { getItems, createItem, deleteItem, likeItem, unlikeItem };

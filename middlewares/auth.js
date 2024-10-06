@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const JWT_TOKEN = require("../utils/config");
-const { unauthorizedUserError, mapAndSendErrors } = require("../utils/errors");
+const { unauthorizedUserError } = require("../utils/errors");
 
 const auth = async (req, res, next) => {
   const { authorization } = req.headers;
@@ -14,12 +14,13 @@ const auth = async (req, res, next) => {
     await jwt.verify(token, JWT_TOKEN, (err, decoded) => {
       if (!err) {
         req.user = decoded;
+        console.log(req.user);
         return;
       }
       throw new Error(unauthorizedUserError.message);
     });
   } catch (err) {
-    mapAndSendErrors(err, res);
+    next(err);
   }
   next();
 };

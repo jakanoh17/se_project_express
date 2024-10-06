@@ -38,6 +38,8 @@ function mapAndSendErrors(err, res) {
     errorMapping[err.message] ||
     errorMapping[err.code] ||
     serverError;
+
+  console.error(errorResponse.message);
   res.status(errorResponse.status).send({ message: errorResponse.message });
 }
 

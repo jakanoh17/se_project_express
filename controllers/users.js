@@ -1,10 +1,10 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const { badRequest, notFound, mapAndSendErrors } = require("../utils/errors");
+const { badRequest, notFound } = require("../utils/errors");
 const JWT_TOKEN = require("../utils/config");
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
@@ -16,22 +16,20 @@ const login = async (req, res) => {
     const token = jwt.sign({ _id: user._id }, JWT_TOKEN, { expiresIn: "7d" });
     res.send({ token });
   } catch (err) {
-    mapAndSendErrors(err, res);
+    next(err);
   }
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(new Error(notFound.message))
     .then((currentUser) => {
       res.send(currentUser);
     })
-    .catch((err) => {
-      mapAndSendErrors(err, res);
-    });
+    .catch(next);
 };
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   try {
     const hash = await bcrypt.hash(password, 10);
@@ -40,11 +38,11 @@ const createUser = async (req, res) => {
     res.status(201).send(foundUser);
   } catch (err) {
     // Could possibly throw 11000 error from MongoDB for duplicate user
-    mapAndSendErrors(err, res);
+    next(err);
   }
 };
 
-const updateCurrentUser = (req, res) => {
+const updateCurrentUser = (req, res, next) => {
   const { name, avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -58,8 +56,6 @@ const updateCurrentUser = (req, res) => {
     .then((updatedUser) => {
       res.send(updatedUser);
     })
-    .catch((err) => {
-      mapAndSendErrors(err, res);
-    });
+    .catch(next);
 };
 module.exports = { createUser, login, getCurrentUser, updateCurrentUser };

@@ -1,0 +1,77 @@
+{
+  "level": "error",
+  "message": "middlewareError",
+  "meta": {
+    "date": "Wed Oct 02 2024 19:14:42 GMT-0400 (Eastern Daylight Time)",
+    "error": { "details": {} },
+    "exception": true,
+    "level": "error",
+    "message": "uncaughtException: Validation failed\nError: Validation failed\n    at C:\\Users\\jenn2\\TT_SE\\SE-projects\\se_project_express\\node_modules\\celebrate\\lib\\celebrate.js:95:19\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)",
+    "os": { "loadavg": [0, 0, 0], "uptime": 1331537.687 },
+    "process": {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\jenn2\\TT_SE\\SE-projects\\se_project_express\\app.js"
+      ],
+      "cwd": "C:\\Users\\jenn2\\TT_SE\\SE-projects\\se_project_express",
+      "execPath": "C:\\Program Files\\nodejs\\node.exe",
+      "gid": null,
+      "memoryUsage": {
+        "arrayBuffers": 18286448,
+        "external": 20554715,
+        "heapTotal": 26697728,
+        "heapUsed": 25013640,
+        "rss": 58286080
+      },
+      "pid": 39112,
+      "uid": null,
+      "version": "v20.12.2"
+    },
+    "req": {
+      "headers": {
+        "accept": "*/*",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmUyMjk1YTlkNGQ3Y2UxNjYxNzM5NzEiLCJpYXQiOjE3Mjc5MTA4MjQsImV4cCI6MTcyODUxNTYyNH0.xBz7xdnJPYTwbbEHODsthFM4yUW7MeeAJCiuVoSl4sE",
+        "connection": "keep-alive",
+        "content-length": "215",
+        "content-type": "application/json",
+        "dnt": "1",
+        "host": "localhost:3001",
+        "origin": "http://localhost:3000",
+        "referer": "http://localhost:3000/",
+        "sec-ch-ua": "\"Google Chrome\";v=\"129\", \"Not=A?Brand\";v=\"8\", \"Chromium\";v=\"129\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-site",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
+      },
+      "httpVersion": "1.1",
+      "method": "PATCH",
+      "originalUrl": "/users/me",
+      "query": {},
+      "url": "/users/me"
+    },
+    "stack": "Error: Validation failed\n    at C:\\Users\\jenn2\\TT_SE\\SE-projects\\se_project_express\\node_modules\\celebrate\\lib\\celebrate.js:95:19\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)",
+    "trace": [
+      {
+        "column": 19,
+        "file": "C:\\Users\\jenn2\\TT_SE\\SE-projects\\se_project_express\\node_modules\\celebrate\\lib\\celebrate.js",
+        "function": null,
+        "line": 95,
+        "method": null,
+        "native": false
+      },
+      {
+        "column": 5,
+        "file": "node:internal/process/task_queues",
+        "function": "process.processTicksAndRejections",
+        "line": 95,
+        "method": "processTicksAndRejections",
+        "native": false
+      }
+    ]
+  }
+}
