@@ -63,14 +63,14 @@ const userSchema = Joi.object({
 }).unknown(true);
 
 // Custom middleware to validate req.user
-const validateUserId = (req, res, next) => {
+function validateUserId(req, res, next) {
   const { error } = userSchema.validate(req.user); // Validate req.user directly
 
   if (error) {
     return res.status(400).json({ error: error.details[0].message }); // Return validation error
   }
-  next();
-};
+  return next();
+}
 
 const validateClothingId = celebrate({
   params: Joi.object().keys({ itemId: Joi.string().alphanum().length(24) }),

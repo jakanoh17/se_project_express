@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require("cors");
+const { errors } = require("celebrate");
+
 const mongoose = require("mongoose");
 const { mapAndSendErrors } = require("./utils/errors");
-const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 mongoose.set("strictQuery", false);
