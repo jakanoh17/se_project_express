@@ -1,2 +1,5 @@
-const { JWT_TOKEN = "idFniofvh58fnrojv" } = process.env;
-module.exports = JWT_TOKEN;
+const { JWT_SECRET = "super-strong-secret" } = process.env;
+
+module.exports = {
+  JWT_SECRET,
+};
