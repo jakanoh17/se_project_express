@@ -2,7 +2,7 @@
   "name": "se_project_express",
   "version": "1.0.0",
   "description": "Adding backend to WTWR app from se_project_react",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
     "lint": "npx eslint .",
