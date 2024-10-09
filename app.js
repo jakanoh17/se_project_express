@@ -7,7 +7,7 @@ const { mapAndSendErrors } = require("./utils/errors");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 mongoose.set("strictQuery", false);
-
+console.log(process.env.JWT_SECRET);
 const app = express();
 
 const users = require("./routes/users");
