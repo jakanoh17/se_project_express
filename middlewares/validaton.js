@@ -7,14 +7,14 @@ const validateURL = (value, helpers) => {
   if (validator.isURL(value)) {
     return value;
   }
-  return helpers.error("string.uri");
+  return helpers.error("any.invalid");
 };
 
 const validateEmail = (value, helpers) => {
   if (validator.isEmail(value)) {
     return value;
   }
-  return helpers.error("string.email");
+  return helpers.error("any.invalid");
 };
 
 const validateNewClothingItem = celebrate({
@@ -26,7 +26,7 @@ const validateNewClothingItem = celebrate({
     }),
     imageUrl: Joi.string().required().custom(validateURL).messages({
       "string.empty": 'The "imageUrl" field must be filled in',
-      "string.uri": 'the "imageUrl" field must be a valid url',
+      "any.invalid": 'the "imageUrl" field must be a valid url',
     }),
     weather: Joi.string().required().valid("hot", "warm", "cold"),
   }),
@@ -37,11 +37,11 @@ const validateNewUserData = celebrate({
     name: Joi.string().required().min(2).max(30),
     avatar: Joi.string().required().custom(validateURL).messages({
       "string.empty": 'The "avatar" field must be filled in',
-      "string.uri": 'The "avatar" field must be a valid url',
+      "any.invalid": 'The "avatar" field must be a valid url',
     }),
     email: Joi.string().required().custom(validateEmail).messages({
       "string.empty": "The 'email' field must be filled in",
-      "string.email": "The 'email' field must be a valid email",
+      "any.invalid": "The 'email' field must be a valid email",
     }),
     password: Joi.string().required(),
   }),
@@ -52,7 +52,7 @@ const validateUpdatedUserData = celebrate({
     name: Joi.string().required().min(2).max(30),
     avatar: Joi.string().required().custom(validateURL).messages({
       "string.empty": 'The "avatar" field must be filled in',
-      "string.uri": 'The "avatar" field must be a valid url',
+      "any.invalid": 'The "avatar" field must be a valid url',
     }),
   }),
 });
@@ -61,7 +61,7 @@ const validateAuthenticationData = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().custom(validateEmail).messages({
       "string.empty": 'The "email" field must be filled in',
-      "string.email": 'The "email" field must be a valid email',
+      "any.invalid": 'The "email" field must be a valid email',
     }),
     password: Joi.string().required(),
   }),

@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const JWT_TOKEN = require("../utils/config");
+const JWT_SECRET = require("../utils/config");
 const { unauthorizedUserError } = require("../utils/errors");
 
 const auth = async (req, res, next) => {
@@ -11,7 +11,7 @@ const auth = async (req, res, next) => {
   // payload contains user._id
   try {
     const token = authorization.replace("Bearer ", "");
-    await jwt.verify(token, JWT_TOKEN, (err, decoded) => {
+    await jwt.verify(token, JWT_SECRET, (err, decoded) => {
       if (!err) {
         req.user = decoded;
         console.log(req.user);

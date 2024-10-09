@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const { badRequest, notFound } = require("../utils/errors");
-const JWT_TOKEN = require("../utils/config");
+const JWT_SECRET = require("../utils/config");
 
 const login = async (req, res, next) => {
   const { email, password } = req.body;
@@ -13,7 +13,7 @@ const login = async (req, res, next) => {
     }
 
     const user = await User.findUserByCredentials(email, password);
-    const token = jwt.sign({ _id: user._id }, JWT_TOKEN, { expiresIn: "7d" });
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" });
     res.send({ token });
   } catch (err) {
     next(err);
