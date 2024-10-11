@@ -12,9 +12,8 @@ const login = async (req, res, next) => {
       throw new Error(badRequest.message);
     }
     const user = await User.findUserByCredentials(email, password);
-    const window = typeof window;
     const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" });
-    res.send({ window, token });
+    res.send({ token });
   } catch (err) {
     next(err);
   }
