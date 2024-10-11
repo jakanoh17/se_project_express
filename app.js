@@ -23,6 +23,13 @@ app.use(express.json());
 // REQUESTS
 app.use(requestLogger);
 
+// CODE REVIEW CRASH TEST
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
+
 app.use("/", index);
 app.use("/users", users);
 app.use("/items", clothingItems);
