@@ -38,8 +38,8 @@ app.use("/", index);
 app.use("/users", users);
 app.use("/items", clothingItems);
 
-app.use((req, res) => {
-  res.status(notFound.status).send({ message: notFound.message });
+app.use((req, res, next) => {
+  next(new Error(notFound.message));
 });
 
 // ERRORS
